@@ -39,6 +39,7 @@ class Attention(nn.Module):
         self.chan = chan
         self.head_dim = self.chan // self.num_heads
         self.scale = qk_scale or self.head_dim ** -0.5
+        assert self.chan % self.num_heads == 0, '"Chan" must be evenly divisible by "num_heads".'
 
         ## Define Layers
         self.qkv = nn.Linear(dim, chan * 3, bias=qkv_bias)
@@ -46,7 +47,6 @@ class Attention(nn.Module):
         self.proj = nn.Linear(chan, chan)
 
     def forward(self, x):
-        assert self.chan % self.num_heads == 0, '"Chan" must be evenly divisible by "num_heads".'
         B, N, C = x.shape
         ## Dimensions: (batch, num_tokens, token_len)
 

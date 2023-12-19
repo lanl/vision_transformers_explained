@@ -1,6 +1,8 @@
 ####################################
 ## Packages
 ####################################
+import sys
+import os
 import math
 import typing
 import numpy as np
@@ -20,7 +22,7 @@ from neural_net import NeuralNet
 NoneFloat = typing.Union[None, float]
 
 ####################################
-## Count Tokens
+## Count Tokens Function
 ####################################
 def count_tokens(w, h, k, s, p):
     """ Function to count how many tokens are produced from a given soft split
