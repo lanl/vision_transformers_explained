@@ -2,7 +2,16 @@
 
 # Vision Transformers Explained
 
-This folder of code contains code and notebooks to supplement the Vision Transformers Explained series written by **Skylar Callis** for *Name of Publication*.
+This folder of code contains code and notebooks to supplement the Vision Transformers Explained series written by **Skylar Callis** for *Name of Publication*. These articles can be read on Medium or in their equivalent Jupyter Notebook:
+
+- Vision Transformers, Explained
+	- Jupyter Notebook
+- Attention for Vision Transformers, Explained
+	- Jupyter Notebook
+ - Position Embeddings for Vision Transformers, Explained
+ 	- Jupyter Notebook
+ - Tokens-to-Token Vision Transformers, Explained
+	- Jupyter Notebook
 
 This project were developed by **Skylar Callis** while working as a post-bachelors student at [Los Alamos National Laboratory (LANL)](https://www.lanl.gov/?source=globalheader) from 2022 - 2024. To see what they are up to these days, visit [Skylar's Website ](https://skylar-jean.com).
 
