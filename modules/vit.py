@@ -30,7 +30,7 @@ NoneFloat = typing.Union[None, float]
 ####################################
 class Patch_Tokenization(nn.Module):
 	def __init__(self,
-				img_size: tuple[int, int, int]=(1, 1, 60, 100),
+				img_size: tuple[int, int, int]=(1, 60, 100),
 				patch_size: int=50,
 				token_len: int=768):
 
@@ -56,7 +56,7 @@ class Patch_Tokenization(nn.Module):
 		self.project = nn.Linear((self.patch_size**2)*C, token_len)
 
 	def forward(self, x):
-		x = self.split(x).transpose(1,0)
+		x = self.split(x).transpose(2,1)
 		x = self.project(x)
 		return x
 
@@ -85,6 +85,12 @@ class NeuralNet(nn.Module):
 		## Define Number of Channels
 		hidden_chan = hidden_chan or in_chan
 		out_chan = out_chan or in_chan
+
+		## Make Parameters Integers
+		assert isinstance(hidden_chan, int) or hidden_chan.is_integer(), "Hidden channels in Neural Network module must be an integer"
+		in_chan = int(in_chan)
+		hidden_chan = int(hidden_chan)
+		out_chan = int(out_chan)
 
 		## Define Layers
 		self.fc1 = nn.Linear(in_chan, hidden_chan)
@@ -129,15 +135,15 @@ class Encoding(nn.Module):
 		## Define Layers
 		self.norm1 = norm_layer(dim)
 		self.attn = Attention(dim=dim,
-							chan=dim,
-							num_heads=num_heads,
-							qkv_bias=qkv_bias,
-							qk_scale=qk_scale)
+								chan=dim,
+								num_heads=num_heads,
+								qkv_bias=qkv_bias,
+								qk_scale=qk_scale)
 		self.norm2 = norm_layer(dim)
 		self.neuralnet = NeuralNet(in_chan=dim,
-								hidden_chan=int(dim*hidden_chan_mul),
-								out_chan=dim,
-								act_layer=act_layer)
+									hidden_chan=int(dim*hidden_chan_mul),
+									out_chan=dim,
+									act_layer=act_layer)
 
 	def forward(self, x):
 		x = x + self.attn(self.norm1(x))
@@ -151,6 +157,7 @@ class ViT_Backbone(nn.Module):
 	def __init__(self,
 				preds: int=1,
 				token_len: int=768,
+				num_tokens: int=500,
 				num_heads: int=1,
 				Encoding_hidden_chan_mul: float=4.,
 				depth: int=12,
@@ -163,6 +170,7 @@ class ViT_Backbone(nn.Module):
 			Args:
 				preds (int): number of predictions to output
 				token_len (int): length of a token
+				num_tokens (int): number of tokens passed to the module
 				num_heads(int): number of attention heads in MSA
 				Encoding_hidden_chan_mul (float): multiplier to determine the number of hidden channels (features) in the NeuralNet component of the Encoding Module
 				depth (int): number of encoding blocks in the model
@@ -176,13 +184,15 @@ class ViT_Backbone(nn.Module):
 		super().__init__()
 
 		## Defining Parameters
+		self.token_len = token_len
+		self.num_tokens = num_tokens
 		self.num_heads = num_heads
 		self.Encoding_hidden_chan_mul = Encoding_hidden_chan_mul
 		self.depth = depth
 
 		## Defining Token Processing Components
 		self.cls_token = nn.Parameter(torch.zeros(1, 1, self.token_len))
-		self.pos_embed = nn.Parameter(data=get_sinusoid_encoding(num_tokens=self.num_tokens+1, token_len=self.token_len), requires_grad=False)
+		self.pos_embed = nn.Parameter(data=get_sinusoid_encoding(num_tokens=int(self.num_tokens+1), token_len=int(self.token_len)), requires_grad=False)
 
 		## Defining Encoding blocks
 		self.blocks = nn.ModuleList([Encoding(dim = self.token_len, 
@@ -264,12 +274,14 @@ class ViT_Model(nn.Module):
 
 		## Defining Patch Embedding Module
 		self.patch_tokens = Patch_Tokenization(img_size,
-		patch_size,
-		token_len)
+												patch_size,
+												token_len)
+		num_tokens = self.patch_tokens.num_tokens
 
 		## Defining ViT Backbone
 		self.backbone = ViT_Backbone(preds,
 									self.token_len,
+									num_tokens,
 									self.num_heads,
 									self.Encoding_hidden_chan_mul,
 									self.depth,
