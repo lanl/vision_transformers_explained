@@ -1,0 +1,30 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Vision Transformers Explained
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Skylar
+    family-names: Callis
+    email: sjcallis@lanl.gov
+    affiliation: Los Alamos National Laboratory
+    orcid: 'https://orcid.org/0009-0009-4133-377X'
+repository-code: 'https://github.com/lanl/vision_transformers_explained'
+url: >-
+  https://towardsdatascience.com/vision-transformers-explained-a9d07147e4c8
+abstract: >-
+  This folder of code contains code and notebooks to
+  supplement the "Vision Transformers Explained" series
+  published on Towards Data Science written by Skylar
+  Callis.
+keywords:
+  - machine learning
+  - pytorch
+  - vision transformers
+  - transformers
+  - attention
+license: BSD-3-Clause
