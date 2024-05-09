@@ -15,7 +15,7 @@ import typing
 import numpy as np
 import torch
 import torch.nn as nn
-import timm.layers as timmm 
+import timm
 
 from attention import Attention
 from position_embedding import get_sinusoid_encoding

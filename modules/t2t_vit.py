@@ -15,7 +15,7 @@ import typing
 import numpy as np
 import torch
 import torch.nn as nn
-import timm.layers as timmm 
+import timm
 
 from attention import Attention
 from position_embedding import get_sinusoid_encoding
@@ -25,6 +25,36 @@ import vit
 ## Custom Datatype for Type Hints
 ####################################
 NoneFloat = typing.Union[None, float]
+
+####################################
+## Count Tokens
+####################################
+def count_tokens(w, h, k, s, p):
+	""" Function to count how many tokens are produced from a given soft split
+
+		Args:
+			w (int): starting width
+			h (int): starting height
+			k (int): kernel size
+			s (int): stride size
+			p (int): padding size
+
+		Returns:
+			new_w (int): number of tokens along the width
+			new_h (int): number of tokens along the height
+			total (int): total number of tokens created
+
+		See Also: 
+		Formula taken from 
+		https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html#torch.nn.Unfold
+		Assuming a 2D input, dilation = 1, and symmetric padding, kernel, and stride
+	"""
+
+	new_w = int(math.floor(((w + 2*p - (k-1) -1)/s)+1))
+	new_h = int(math.floor(((h + 2*p - (k-1) -1)/s)+1))
+	total = new_w * new_h
+
+	return new_w, new_h, total
 
 ####################################
 ## Token Transformer
